@@ -140,5 +140,7 @@ cython_debug/
 # ignore images
 *.gif
 *.avi
-!output_gif_20277.gif
 *.mp4
+
+# Do not ignore exampel
+!output_gif_65189.gif

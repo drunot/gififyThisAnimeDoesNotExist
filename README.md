@@ -3,7 +3,7 @@ This python script downloads and creates videos and gifs from [thisanimedoesnote
 
 The script donwloads the images at all creativity levels and makes them to a gif or video.
 
-![Example for seed 20277](output_gif_20277.gif)
+![Example for seed 65189](output_gif_65189.gif)
 
 ## Prerequisites
 
