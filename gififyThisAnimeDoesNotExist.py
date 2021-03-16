@@ -4,7 +4,7 @@ import numpy as np
 import sys
 from PIL import Image
 import argparse
-
+import secrets
 
 DEFAULT_FRAME_RATE = 5
 SUPPORTED_TYPES = ["gif", "avi", "mp4"]
@@ -86,8 +86,16 @@ def imageAddReversed(imgs: list):
     return imgs_reversed
 
 
-def handleArguments(args):
+def handleArguments(args, parser: argparse.ArgumentParser):
     """Handles to set default arguments."""
+    if args.random == False and ("Seed" not in dir(args) or args.Seed is None):
+        parser.print_usage()
+        print(
+            "gififyThisAnimeDoesNotExist.py: error: the following arguments are required: seed"
+        )
+        exit(1)
+    elif args.random == True:
+        args.Seed = secrets.randbelow(100000)
     if not args.output is None:
         if args.fileType is None:
             outputSplit = args.output.split(".")
@@ -140,6 +148,7 @@ if __name__ == "__main__":
         type=int,
         help="The seed from thisanimedoesnotexist.ai",
         choices=range(0, 100000),
+        nargs="?",
     )
 
     my_parser.add_argument(
@@ -165,7 +174,7 @@ if __name__ == "__main__":
     my_parser.add_argument(
         "--reverse",
         "--loop",
-        "-r",
+        "-l",
         action="store_true",
         help="Adds the reverse version of the pictures to the en of the video/gif to make a perfect loop.",
     )
@@ -180,8 +189,14 @@ if __name__ == "__main__":
         help="Sets the fps to export with.",
     )
 
+    my_parser.add_argument(
+        "--random",
+        "-r",
+        action="store_true",
+        help="Overwrites seed with a random seed. When this is set, seed is not needed.",
+    )
     args = my_parser.parse_args()
-    handleArguments(args)
+    handleArguments(args, my_parser)
     all_imgs = getAllImages(args.Seed)
     if args.reverse:
         all_imgs = imageAddReversed(all_imgs)

@@ -31,6 +31,8 @@ You can find the seeds from the web-page or just type somting random in between 
 
 `-t`, `--type`:  The output type. (gif, avi or mp4). Default is gif. If this is set the defualt output string is changed acordingly.
 
-`--reverse`, `--loop`, `-r`: Adds the reverse version of the pictures to the en of the video/gif to make a perfect loop.
+`--reverse`, `--loop`, `-l`: Adds the reverse version of the pictures to the en of the video/gif to make a perfect loop.
 
 `--fps`, `-f`: Sets the fps to export with. No interpolation is used. This in turn also sets the length of the whole video or gif. Default is 8.
+
+`--random`, `-r`: Overwrites seed with a random seed. When this is set, seed is not needed.
