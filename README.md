@@ -1,11 +1,14 @@
-# Gifify This Animie does not exist
+# Gifify This Anime does not exist
 This python script downloads and creates videos and gifs from [thisanimedoesnotexist.ai](https://thisanimedoesnotexist.ai).
+
+The script donwloads the images at all creativity levels and makes them to a gif or video.
 
 ![Example for seed 20277](output_gif_20277.gif)
 
 ## Prerequisites
 
 To get the script to work run:
+
 ```shell
 python -m pip install -r requirenments.txt
 ```
@@ -15,11 +18,19 @@ python -m pip install -r requirenments.txt
 You can just get the videos and gifs as showen below:
 
 ```shell
-python gififyThisAnimieDoesNotExist.py <seed>
+python gififyThisAnimeDoesNotExist.py <seed>
 ```
 
 You can find the seeds from the web-page or just type somting random in between 0-99999.
 
-This scipt is right now very simple and could se future updates.
+`gififyThisAnimeDoesNotExist.py` now takse a couple of optional arguments:
 
-An example of what the scipt does is:
+`-h`, `--help`: Print the help message.
+
+`-o`, `--output`: The output file. This also sets the type mp4,avi or gif if an extension is given. If no extension is given the set type extension will be added to the output. If type is set. It will be saved with that type no matter the extension. If extension is not valid. The type will be set to gif. Default is output_gif_\<seed\>.gif
+
+`-t`, `--type`:  The output type. (gif, avi or mp4). Default is gif. If this is set the defualt output string is changed acordingly.
+
+`--reverse`, `--loop`, `-r`: Adds the reverse version of the pictures to the en of the video/gif to make a perfect loop.
+
+`--fps`, `-f`: Sets the fps to export with. No interpolation is used. This in turn also sets the length of the whole video or gif. Default is 8.

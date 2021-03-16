@@ -141,3 +141,4 @@ cython_debug/
 *.gif
 *.avi
 !output_gif_20277.gif
+*.mp4

@@ -1,1 +1,5 @@
-opencv
+opencv-python
+numpy
+requests
+Pillow
+argparse
