@@ -144,3 +144,5 @@ cython_debug/
 
 # Do not ignore exampel
 !output_gif_65189.gif
+
+cain-ncnn-vulkan*

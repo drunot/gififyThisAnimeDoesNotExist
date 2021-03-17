@@ -5,11 +5,22 @@ import sys
 from PIL import Image
 import argparse
 import secrets
+import os
+import glob
+import subprocess
+import shutil
 
 DEFAULT_FRAME_RATE = 5
 SUPPORTED_TYPES = ["gif", "avi", "mp4"]
 
 URL = "https://thisanimedoesnotexist.ai/results/psi-{:}/seed{:}.png"
+
+
+def randomHex(len: int):
+    byteArray = []
+    for foo in range(len):
+        byteArray.append(secrets.randbelow(255).to_bytes(1, "little"))
+    return b"".join(byteArray).hex()
 
 
 def getImage(creativity: float, seed: int):
@@ -77,6 +88,11 @@ def imageToGif(imgs: list, fps: int, output: str):
     )
 
 
+def imageToPng(imgs: list, output: str):
+    for num, img in enumerate(imgs):
+        cv2.imwrite(output + "/" + str(num).rjust(2, "0") + ".png", img)
+
+
 def imageAddReversed(imgs: list):
     """Make a loop by adding a reverst set of images to the back of the input list."""
     temp = imgs.copy()
@@ -128,14 +144,45 @@ def handleArguments(args, parser: argparse.ArgumentParser):
             args.output = "output_video_" + seed_str + ".mp4"
 
 
-def saveImagesOfType(imgs: list, *, fileType: str, fps: int, output: str):
+def saveImagesOfType(
+    imgs: list, *, fileType: str, fps: int, output: str, interpolate: int
+):
     """Saves an array of cv2 images to video or gif, depending on the type."""
+    temp_folders = []
+    if interpolate != 0:
+        paths = glob.glob("cain-ncnn-vulkan*")
+        if len(paths) < 0:
+            print(
+                "Please download cain-ncnn-vulkan from https://github.com/nihui/cain-ncnn-vulkan/releases/latest and place the cain-ncnn-vulkan-YYYYDDMM-OS folder in the same folder as this."
+            )
+            exit(1)
+        temp_folders.append("__gifify_temp_" + randomHex(10))
+        os.makedirs(temp_folders[0])
+        imageToPng(imgs, temp_folders[0])
+        for num in range(1, interpolate + 1):
+            temp_folders.append("__gifify_temp_" + randomHex(10))
+            os.makedirs(temp_folders[num])
+            print(
+                subprocess.check_output(
+                    paths[0]
+                    + "/cain-ncnn-vulkan -i "
+                    + temp_folders[num - 1]
+                    + " -o "
+                    + temp_folders[num]
+                )
+            )
+
+        imgs = []
+        for file in glob.glob(temp_folders[-1] + "/*.png"):
+            imgs.append(cv2.imread(file))
     if fileType == "gif":
         imageToGif(imgs, fps, output)
     elif fileType == "avi":
         imageToAvi(imgs, fps, output)
     elif fileType == "mp4":
         imageToAvi(imgs, fps, output)
+    for folder in temp_folders:
+        shutil.rmtree(folder)
 
 
 if __name__ == "__main__":
@@ -195,9 +242,24 @@ if __name__ == "__main__":
         action="store_true",
         help="Overwrites seed with a random seed. When this is set, seed is not needed.",
     )
+
+    my_parser.add_argument(
+        "--interpolate",
+        "-i",
+        action="store",
+        type=int,
+        default=0,
+        help="Makes interpolation of the frames..",
+    )
     args = my_parser.parse_args()
     handleArguments(args, my_parser)
     all_imgs = getAllImages(args.Seed)
     if args.reverse:
         all_imgs = imageAddReversed(all_imgs)
-    saveImagesOfType(all_imgs, fileType=args.fileType, fps=args.fps, output=args.output)
+    saveImagesOfType(
+        all_imgs,
+        fileType=args.fileType,
+        fps=args.fps,
+        output=args.output,
+        interpolate=args.interpolate,
+    )
