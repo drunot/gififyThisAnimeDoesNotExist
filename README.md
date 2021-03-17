@@ -36,3 +36,5 @@ You can find the seeds from the web-page or just type somting random in between 
 `--fps`, `-f`: Sets the fps to export with. No interpolation is used. This in turn also sets the length of the whole video or gif. Default is 8.
 
 `--random`, `-r`: Overwrites seed with a random seed. When this is set, seed is not needed.
+
+`--interpolate`, `-i`: Makes interpolation of the frames. For interpolation to work please download [cain-ncnn-vulkan](https://github.com/nihui/cain-ncnn-vulkan) and place that in the same folder as the script.

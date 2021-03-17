@@ -145,4 +145,6 @@ cython_debug/
 # Do not ignore exampel
 !output_gif_65189.gif
 
+#include files related to interpolation.
 cain-ncnn-vulkan*
+__gifify_temp_*

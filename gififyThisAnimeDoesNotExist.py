@@ -151,7 +151,7 @@ def saveImagesOfType(
     temp_folders = []
     if interpolate != 0:
         paths = glob.glob("cain-ncnn-vulkan*")
-        if len(paths) < 0:
+        if len(paths) < 1:
             print(
                 "Please download cain-ncnn-vulkan from https://github.com/nihui/cain-ncnn-vulkan/releases/latest and place the cain-ncnn-vulkan-YYYYDDMM-OS folder in the same folder as this."
             )
