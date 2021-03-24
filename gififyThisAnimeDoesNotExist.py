@@ -17,6 +17,7 @@ URL = "https://thisanimedoesnotexist.ai/results/psi-{:}/seed{:}.png"
 
 
 def randomHex(len: int):
+    """Returns a random hex string at the given length."""
     byteArray = []
     for foo in range(len):
         byteArray.append(secrets.randbelow(255).to_bytes(1, "little"))
@@ -40,6 +41,7 @@ def getImage(creativity: float, seed: int):
 
 
 def getAllImages(seed: int):
+    """Gets a list of images at all creativity levels."""
     all_img = []
     for num in range(3, 21):
         all_img.append(getImage(num / 10, seed))
@@ -89,8 +91,9 @@ def imageToGif(imgs: list, fps: int, output: str):
 
 
 def imageToPng(imgs: list, output: str):
+    """Saves an image array to a folder with the gievn output namve"""
     for num, img in enumerate(imgs):
-        cv2.imwrite(output + "/" + str(num).rjust(2, "0") + ".png", img)
+        cv2.imwrite(output + "/" + str(num).rjust(8, "0") + ".png", img)
 
 
 def imageAddReversed(imgs: list):
@@ -144,10 +147,8 @@ def handleArguments(args, parser: argparse.ArgumentParser):
             args.output = "output_video_" + seed_str + ".mp4"
 
 
-def saveImagesOfType(
-    imgs: list, *, fileType: str, fps: int, output: str, interpolate: int
-):
-    """Saves an array of cv2 images to video or gif, depending on the type."""
+def interpolate(imgs: list, interpolate: int):
+    """ Do interpolation of images """
     temp_folders = []
     if interpolate != 0:
         paths = glob.glob("cain-ncnn-vulkan*")
@@ -169,20 +170,26 @@ def saveImagesOfType(
                     + temp_folders[num - 1]
                     + " -o "
                     + temp_folders[num]
-                )
+                ).decode("utf-8")
             )
 
         imgs = []
         for file in glob.glob(temp_folders[-1] + "/*.png"):
             imgs.append(cv2.imread(file))
+    for folder in temp_folders:
+        shutil.rmtree(folder)
+    return imgs
+
+
+def saveImagesOfType(imgs: list, *, fileType: str, fps: int, output: str):
+    """Saves an array of cv2 images to video or gif, depending on the type."""
+
     if fileType == "gif":
         imageToGif(imgs, fps, output)
     elif fileType == "avi":
         imageToAvi(imgs, fps, output)
     elif fileType == "mp4":
         imageToAvi(imgs, fps, output)
-    for folder in temp_folders:
-        shutil.rmtree(folder)
 
 
 if __name__ == "__main__":
@@ -249,17 +256,17 @@ if __name__ == "__main__":
         action="store",
         type=int,
         default=0,
-        help="Makes interpolation of the frames..",
+        help="Specifies the number of interpolations should run on the frame. Please note that this is exponential. A value of 3 e.g. means 8 times the frames. 0-3 is therefore recomended",
     )
     args = my_parser.parse_args()
     handleArguments(args, my_parser)
     all_imgs = getAllImages(args.Seed)
     if args.reverse:
         all_imgs = imageAddReversed(all_imgs)
+    all_imgs = interpolate(all_imgs, args.interpolate)
     saveImagesOfType(
         all_imgs,
         fileType=args.fileType,
         fps=args.fps,
         output=args.output,
-        interpolate=args.interpolate,
     )
